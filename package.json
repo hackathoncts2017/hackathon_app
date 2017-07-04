@@ -5,7 +5,8 @@
   "author": null,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+	"start": "react-native-scripts start"
   },
   "jest": {
     "preset": "jest-expo"
@@ -20,6 +21,7 @@
     "react-navigation": "^1.0.0-beta.11"
   },
   "devDependencies": {
-    "jest-expo": "~18.0.0"
+    "jest-expo": "~18.0.0",	
+	"react-native-scripts": "0.0.40"
   }
 }
