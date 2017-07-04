@@ -32,6 +32,9 @@ static navigationOptions = {
   clickHdr(){
 	this.setState({"isSearch":true,"product":[]});
   }
+  productSelect(){
+	alert("ff");
+  }
   componentDidMount() {
     // alert(width)
     this.product = [];
@@ -72,6 +75,7 @@ static navigationOptions = {
   }
   render() {
 	//alert(this.state);
+	var $this = this;
     return (
       <View style={styles.container}>
 		<View style={styles.Heading}>
@@ -98,6 +102,7 @@ static navigationOptions = {
 				  ? this.state.product.map(function(list, i) {
 					  return (
 						<View key={i}>
+						  <TouchableOpacity onPress={$this.productSelect.bind($this)}>
 						  <View style={i == 0 ? styles.listFirst : styles.list}>
 							<View style={styles.imageBox}>
 								<Image
@@ -120,6 +125,7 @@ static navigationOptions = {
 						  </View>
 						  <View style={styles.buybtn}>
 						  </View>
+						  </TouchableOpacity>
 						</View>
 					  );
 					})
