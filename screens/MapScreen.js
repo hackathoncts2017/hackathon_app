@@ -4,7 +4,9 @@ import { MapView } from 'expo';
 
 const mapDelta = 0.022;
 const ANCHOR = { x: 0.5, y: 0.5 };
+const watchID = null;
 export default class MapScreen extends React.Component {
+
   static navigationOptions = {
     title: 'Map',
   };
@@ -15,7 +17,9 @@ export default class MapScreen extends React.Component {
       origin: '13.0011824, 80.2564907',
       destination : '13.0211824, 80.2264907',
       initialLatitude: 13.0011824,
-      initialLongitute: 80.2564907
+      initialLongitute: 80.2564907,
+      initialPosition: 'unknown',
+      lastPosition: 'unknown'
     };
   }
   decode(t,e){
@@ -24,7 +28,26 @@ export default class MapScreen extends React.Component {
       return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
   componentDidMount() {
-    this.getDirections(this.state.origin, this.state.destination);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var initialPosition = JSON.stringify(position);
+        alert(position.coords.latitude);
+        alert(position.coords.longitude);
+        this.setState({"initialLatitude" : position.coords.latitude, "initialLongitute": position.coords.longitude});
+
+        this.getDirections(position.coords.latitude + ', ' + position.coords.longitude, this.state.destination);
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    watchID = navigator.geolocation.watchPosition((position) => {
+      var lastPosition = JSON.stringify(position);
+      this.setState({lastPosition});
+    });
+    
+  }
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchID);
   }
 
   async getDirections(startLoc, destinationLoc) {
@@ -49,32 +72,23 @@ export default class MapScreen extends React.Component {
           longitudeDelta: mapDelta,
         }}
       >
-      <MapView.Marker
-        coordinate={{
-          latitude: this.state.initialLatitude,
-          longitude: this.state.initialLongitute
-        }}
-      />
-      <MapView.Marker
-        coordinate={{
-          latitude: +this.state.destination.split(',')[0].trim(),
-          longitude: +this.state.destination.split(',')[1].trim()
-        }}
-      />
-      <Components.MapView.Polyline
-          coordinates={[...this.state.path]}
-          strokeWidth={4}
-      />
+        <MapView.Marker
+          coordinate={{
+            latitude: this.state.initialLatitude,
+            longitude: this.state.initialLongitute
+          }}
+        />
+        <MapView.Marker
+          coordinate={{
+            latitude: +this.state.destination.split(',')[0].trim(),
+            longitude: +this.state.destination.split(',')[1].trim()
+          }}
+        />
+        <MapView.Polyline
+            coordinates={[...this.state.path]}
+            strokeWidth={4}
+        />
       </MapView>
-
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
-  },
-});
