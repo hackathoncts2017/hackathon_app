@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text , Platform} from 'react-native';
 import { MapView } from 'expo';
 
 const mapDelta = 0.022;
@@ -28,26 +28,31 @@ export default class MapScreen extends React.Component {
       return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        var initialPosition = JSON.stringify(position);
-        alert(position.coords.latitude);
-        alert(position.coords.longitude);
-        this.setState({"initialLatitude" : position.coords.latitude, "initialLongitute": position.coords.longitude});
+    if (Platform.OS == 'android') {
+      this.getDirections(this.state.initialLatitude + ', ' + this.state.initialLongitute, this.state.destination);
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          var initialPosition = JSON.stringify(position);
+          alert(position.coords.latitude);
+          alert(position.coords.longitude);
+          this.setState({"initialLatitude" : position.coords.latitude, "initialLongitute": position.coords.longitude});
 
-        this.getDirections(position.coords.latitude + ', ' + position.coords.longitude, this.state.destination);
-      },
-      (error) => alert(error.message),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
-    watchID = navigator.geolocation.watchPosition((position) => {
-      var lastPosition = JSON.stringify(position);
-      this.setState({lastPosition});
-    });
-    
+          this.getDirections(position.coords.latitude + ', ' + position.coords.longitude, this.state.destination);
+        },
+        (error) => alert(error.message),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      );
+      watchID = navigator.geolocation.watchPosition((position) => {
+        var lastPosition = JSON.stringify(position);
+        this.setState({lastPosition});
+      });
+    }
   }
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchID);
+    if (Platform.OS != 'android') {
+      navigator.geolocation.clearWatch(this.watchID);
+    }
   }
 
   async getDirections(startLoc, destinationLoc) {
