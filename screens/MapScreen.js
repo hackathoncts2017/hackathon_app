@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
-import { Components } from 'expo';
+import { MapView } from 'expo';
 
 const mapDelta = 0.022;
 const ANCHOR = { x: 0.5, y: 0.5 };
@@ -40,7 +40,7 @@ export default class MapScreen extends React.Component {
 
   render() {
     return (
-      <Components.MapView
+      <MapView
         style={{ flex: 1 }}
         initialRegion={{
           latitude: this.state.initialLatitude,
@@ -49,13 +49,13 @@ export default class MapScreen extends React.Component {
           longitudeDelta: mapDelta,
         }}
       >
-      <Components.MapView.Marker
+      <MapView.Marker
         coordinate={{
           latitude: this.state.initialLatitude,
           longitude: this.state.initialLongitute
         }}
       />
-      <Components.MapView.Marker
+      <MapView.Marker
         coordinate={{
           latitude: +this.state.destination.split(',')[0].trim(),
           longitude: +this.state.destination.split(',')[1].trim()
@@ -65,7 +65,7 @@ export default class MapScreen extends React.Component {
           coordinates={[...this.state.path]}
           strokeWidth={4}
       />
-      </Components.MapView>
+      </MapView>
 
     );
   }
