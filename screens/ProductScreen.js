@@ -72,7 +72,7 @@ static navigationOptions = {
     return (
       <View style={styles.container}>
         <View style={styles.Heading}>
-          <Text style={styles.HeadingTxt}>Product</Text>
+			<Text style={styles.HeadingTxt}>{this.state && this.state.isSearch?"Search" : "Product"}</Text>
         </View>
 		{
 			this.state && this.state.isSearch?
