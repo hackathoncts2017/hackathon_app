@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  WebView,
   TouchableOpacity
 } from 'react-native';
 import { Constants } from 'expo';
@@ -21,8 +22,9 @@ export default class ProductScreen extends React.Component {
 static navigationOptions = {
     header: null,
   };
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       product: [],
 	  isSearch:true
     };
@@ -30,11 +32,14 @@ static navigationOptions = {
   clickHdr(){
 	this.setState({"isSearch":true,"product":[]});
   }
+  productSelect(){
+	alert("ff");
+  }
   componentDidMount() {
     // alert(width)
     this.product = [];
 	this.setState({"isSearch":true});
-    //this.printFiles();
+    //this.printFiles();	
   }
  
   async printFiles(searchTxt) {
@@ -45,6 +50,7 @@ static navigationOptions = {
         break;
       }
     }
+	this.product.sort( function( a, b ) { return b.productBaseInfo.productAttributes.maximumRetailPrice.amount - a.productBaseInfo.productAttributes.maximumRetailPrice.amount; } )
     this.setState({ product: this.product });
   }
   fetchApi(searchTxt) {
@@ -69,9 +75,10 @@ static navigationOptions = {
   }
   render() {
 	//alert(this.state);
+	var $this = this;
     return (
       <View style={styles.container}>
-        <View style={styles.Heading}>
+		<View style={styles.Heading}>
 			<Text style={styles.HeadingTxt}>{this.state && this.state.isSearch?"Search" : "Product"}</Text>
         </View>
 		{
@@ -95,6 +102,7 @@ static navigationOptions = {
 				  ? this.state.product.map(function(list, i) {
 					  return (
 						<View key={i}>
+						  <TouchableOpacity onPress={$this.productSelect.bind($this)}>
 						  <View style={i == 0 ? styles.listFirst : styles.list}>
 							<View style={styles.imageBox}>
 								<Image
@@ -117,6 +125,7 @@ static navigationOptions = {
 						  </View>
 						  <View style={styles.buybtn}>
 						  </View>
+						  </TouchableOpacity>
 						</View>
 					  );
 					})
